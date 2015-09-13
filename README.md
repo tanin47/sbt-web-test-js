@@ -10,7 +10,9 @@ There are 2 things to note:
 
 Requirement
 --------------
-- PhantomJS: because we run Jasmine tests using PhantomJS
+
+- [PhantomJS](http://phantomjs.org/): because we run Jasmine tests using PhantomJS
+- Scala 2.10.4+ or 2.11.X
 
 
 How to use it
@@ -19,7 +21,7 @@ How to use it
 1. Add sbt-web-test-js into plugins.sbt:
 
 ```scala
-addSbtPlugin("com.fongmun" % "sbt-web-test-js" % "1.0.0")
+addSbtPlugin("com.fongmun" %% "sbt-web-test-js" % "1.0.0")
 ```
 
 2. Configure the sbt-web-test-js in build.sbt:
