@@ -134,7 +134,7 @@ object TestJsPlugin extends AutoPlugin {
       "jasmine.js",
       "jasmine-html.js",
       "boot.js"
-    ).map { file =>
+    ).foreach { file =>
       transfer(s"jasmine/$file", parentDir / file)
     }
   }
