@@ -19,7 +19,7 @@ How to use it
 1. Add sbt-web-test-js into plugins.sbt:
 
 ```scala
-addSbtPlugin("com.fongmun" % "sbt-web-test-js" % "0.1.0")
+addSbtPlugin("com.fongmun" % "sbt-web-test-js" % "1.0.0")
 ```
 
 2. Configure the sbt-web-test-js in build.sbt:
@@ -27,10 +27,11 @@ addSbtPlugin("com.fongmun" % "sbt-web-test-js" % "0.1.0")
 ```scala
 testJsPhantomJsBinPath := "/usr/local/bin/phantomjs"
 
-testJs <<= testJs dependsOn (CoffeeScriptKeys.coffeescript in TestAssets) // the coffeescript should be compiled before running tests
+// The Coffeescript files should be compiled before running tests,
+// and the compiled Javascripts and pure Javascripts files should be moved to (WebKeys.public in TestAssets)
+testJs <<= testJs dependsOn (WebKeys.assets in TestAssets) 
 
-testJsTestFiles := ((WebKeys.public in TestAssets).value / "javascripts" ** "*.spec.js").get ++
-  ((sourceDirectory in Test).value / "assets" / "javascripts" ** "*.spec.js").get
+testJsTestFiles := ((WebKeys.public in TestAssets).value / "javascripts" ** "*.spec.js")
 ```
 
 3. Run `sbt testJs`

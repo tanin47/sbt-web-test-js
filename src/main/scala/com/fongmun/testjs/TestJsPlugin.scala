@@ -14,7 +14,7 @@ object TestJsPlugin extends AutoPlugin {
   object autoImport {
     val testJs = TaskKey[Unit]("testJs", "Run tests with Jasmine")
 
-    val testJsTestFiles = SettingKey[Seq[File]]("testJsTestFiles", "the files that contain tests")
+    val testJsTestFiles = SettingKey[PathFinder]("testJsTestFiles", "the files that contain tests")
     val testJsOutputDir = SettingKey[File]("testJsOutputDir", "directory to output files to")
     val testJsPhantomJsBinPath = SettingKey[String]("testJsPhantomJsBinPath", "The full path of PhantomJS executable")
     val testJsPhantomJsDriver = SettingKey[() => PhantomJSDriver]("testJsPhantomJsDriver")
@@ -69,14 +69,10 @@ object TestJsPlugin extends AutoPlugin {
       )
     },
     testJs := {
-      println("GEELLO")
       val logger = sLog.value
       val jasmineHtml = testJsOutputDir.value / "testjs.html"
 
-      println(testJsTestFiles.value)
-      println((sourceDirectory in Test).value)
-
-      val allJsTags = testJsTestFiles.value
+      val allJsTags = testJsTestFiles.value.get
         .map(_.getAbsolutePath)
         .map { path =>
           s"""<script type="text/javascript" src="file://$path"></script>"""
