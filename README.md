@@ -12,7 +12,7 @@ Requirement
 --------------
 
 - [PhantomJS](http://phantomjs.org/): because we run Jasmine tests using PhantomJS
-- Scala 2.10.4+ or 2.11.X
+- Scala 2.10.4+
 
 
 How to use it
@@ -20,23 +20,26 @@ How to use it
 
 1. Add sbt-web-test-js into plugins.sbt:
 
-```scala
-addSbtPlugin("com.fongmun" %% "sbt-web-test-js" % "1.0.0")
-```
+  ```scala
+  addSbtPlugin("com.fongmun" %% "sbt-web-test-js" % "1.0.0")
+  ```
 
 2. Configure the sbt-web-test-js in build.sbt:
 
-```scala
-testJsPhantomJsBinPath := "/usr/local/bin/phantomjs"
+  ```scala
+  testJsPhantomJsBinPath := "/usr/local/bin/phantomjs"
 
-// The Coffeescript files should be compiled before running tests,
-// and the compiled Javascripts and pure Javascripts files should be moved to (WebKeys.public in TestAssets)
-testJs <<= testJs dependsOn (WebKeys.assets in TestAssets) 
+  // The Coffeescript files should be compiled before running tests,
+  // and the compiled Javascripts and pure Javascripts files should be moved to (WebKeys.public in TestAssets)
+  // (WebKeys.assets in TestAssets) does exactly that.
+  testJs <<= testJs dependsOn (WebKeys.assets in TestAssets)
 
-testJsTestFiles := ((WebKeys.public in TestAssets).value / "javascripts" ** "*.spec.js")
-```
+  testJsTestFiles := ((WebKeys.public in TestAssets).value / "javascripts" ** "*.spec.js")
+  ```
 
 3. Run `sbt testJs`
+
+### Run Javascripts tests with sbt test
 
 You can also hook it to your test command by adding the below line to build.sbt:
 
