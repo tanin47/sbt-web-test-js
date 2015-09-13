@@ -1,12 +1,12 @@
 sbt-web-test-js
 ==================
 
-sbt-web-test-js is a sbt-web plugin that run tests within [Jasmine](https://github.com/jasmine/jasmine). Tests can be written in both Javascripts and Coffeescripts.
+A sbt-web plugin that run tests within [Jasmine](https://github.com/jasmine/jasmine). Tests can be written in both Javascripts and Coffeescripts.
 
 There are 2 things to note:
 
 1. [playframework](https://github.com/playframework/playframework) uses sbt-web. Therefore, sbt-web-test-js can be used with playframework as well.
-2. This projects doesn't depend on sbt-web. However, it requires sbt-web in your project because of sbt-web's directory structure.
+2. The plugin doesn't depend on sbt-web directly. However, it depends on sbt-web for compiling Coffeescripts and move all Javascripts into appropriate folders.
 
 Requirement
 --------------
@@ -47,9 +47,9 @@ You can also hook it to your test command by adding the below line to build.sbt:
 (test in Test) <<= (test in Test) dependsOn testJs
 ```
 
-And you can run `sbt test`, and it will also run testJs.
+Now `sbt test` will also run `sbt testJs`
 
-Contributors:
+Contributors
 ---------------
 
 * Tanin Na Nakorn [@tanin](http://twitter.com/tanin)
