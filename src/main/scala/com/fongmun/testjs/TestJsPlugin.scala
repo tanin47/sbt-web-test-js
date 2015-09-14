@@ -88,14 +88,14 @@ object TestJsPlugin extends AutoPlugin {
         s"""
           | <html>
           |   <head>
-          |     <link rel="shortcut icon" type="image/png" href="$jasmineDirAbsolutePath/jasmine_favicon.png">
-          |     <link rel="stylesheet" type="text/css" href="$jasmineDirAbsolutePath/jasmine.css">
+          |     <link rel="shortcut icon" type="image/png" href="file://$jasmineDirAbsolutePath/jasmine_favicon.png">
+          |     <link rel="stylesheet" type="text/css" href="file://$jasmineDirAbsolutePath/jasmine.css">
           |
-          |     <script type="text/javascript" src="$jasmineDirAbsolutePath/override.js"></script>
+          |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/override.js"></script>
           |
-          |     <script type="text/javascript" src="$jasmineDirAbsolutePath/jasmine.js"></script>
-          |     <script type="text/javascript" src="$jasmineDirAbsolutePath/jasmine-html.js"></script>
-          |     <script type="text/javascript" src="$jasmineDirAbsolutePath/boot.js"></script>
+          |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/jasmine.js"></script>
+          |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/jasmine-html.js"></script>
+          |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/boot.js"></script>
           |     <script type="text/javascript">
           |       jasmine.getEnv().addReporter(reporter);
           |     </script>
