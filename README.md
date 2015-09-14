@@ -15,6 +15,12 @@ Requirement
 - Scala 2.10.4+
 
 
+Why we need it
+----------------
+
+Please see [our blog](http://tech.fongmun.com/post/129065417782/test-javascripts-and-coffeescripts-in)
+
+
 How to use it
 ---------------
 
@@ -23,6 +29,9 @@ How to use it
   ```scala
   addSbtPlugin("com.fongmun" %% "sbt-web-test-js" % "1.0.0")
   ```
+
+  * Please note that we are waiting for the approval of [OSSRH-17664](https://issues.sonatype.org/browse/OSSRH-17664).
+  So, we can publish our plugin to Maven Central
 
 2. Configure the sbt-web-test-js in build.sbt:
 
@@ -37,9 +46,21 @@ How to use it
   testJsTestFiles := ((WebKeys.public in TestAssets).value / "javascripts" ** "*.spec.js")
   ```
 
-3. Run `sbt testJs`
+3. Run `sbt testJs` and you'll see the result:
 
-### Run Javascripts tests with sbt test
+  ```bash
+  [info] Running 2 suites
+  [info] Test from Coffeescript
+  [info]  - Test from Coffeescript contains spec with an expectation [passed]
+  [info] Test from Javascripts
+  [info]  - Test from Javascripts contains spec with an expectation [passed]
+  [info] Total: 2, Success: 2, Failure: 0
+  [success] Total time: 3 s, completed Sep 14, 2015 5:20:22 PM
+  ```
+
+
+Integrate with sbt test
+------------------------------------
 
 You can also hook it to your test command by adding the below line to build.sbt:
 
@@ -48,6 +69,7 @@ You can also hook it to your test command by adding the below line to build.sbt:
 ```
 
 Now `sbt test` will also run `sbt testJs`
+
 
 Contributors
 ---------------
