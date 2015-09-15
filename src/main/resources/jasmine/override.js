@@ -17,7 +17,6 @@ console.log = function() {
 
 var reporter = {
   jasmineStarted: function(suiteInfo) {
-    console.log('Running ' + suiteInfo.totalSpecsDefined + ' suites');
   },
   suiteStarted: function(result) {
     console.log(result.fullName);
@@ -25,7 +24,6 @@ var reporter = {
   specStarted: function(result) {
   },
   specDone: function(result) {
-    console._log(result)
     console.log(' - ' + result.fullName + ' [' + result.status + ']');
     for(var i = 0; i < result.failedExpectations.length; i++) {
       console.log('   Failure: ' + result.failedExpectations[i].message);

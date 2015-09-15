@@ -6,8 +6,15 @@ testJsPhantomJsBinPath := "/usr/local/bin/phantomjs"
 
 testJs <<= testJs dependsOn (WebKeys.assets in TestAssets)
 
-testJsLibFiles := ((WebKeys.public in TestAssets).value / "lib" / "jquery.js")
-
-testJsTestFiles := ((WebKeys.public in TestAssets).value / "javascripts" ** "*.spec.js")
+testJsSuites := Seq(
+  TestJsSuite(
+    libs = (WebKeys.public in TestAssets).value / "lib" / "lib.js",
+    tests = (WebKeys.public in TestAssets).value / "javascripts" / "test.spec.js"
+  ),
+  TestJsSuite(
+    libs = (WebKeys.public in TestAssets).value / "lib" / "lib2.js",
+    tests = (WebKeys.public in TestAssets).value / "javascripts" / "test2.spec.js"
+  )
+)
 
 (sourceDirectory in TestAssets) := (baseDirectory in Test).value / "test" / "assets"
