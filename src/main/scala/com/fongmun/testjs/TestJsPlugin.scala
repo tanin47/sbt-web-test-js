@@ -24,6 +24,7 @@ object TestJsPlugin extends AutoPlugin {
     )
 
     val testJs = TaskKey[Unit]("testJs", "Run tests with Jasmine")
+    val testJsBuild = TaskKey[Seq[File]]("testJsBuild", "Prepare the test HTML files")
 
     val testJsSuites = SettingKey[Seq[TestJsSuite]]("testJsSuites", "One suite corresponds to one HTML file. Divide them wisely")
 
@@ -81,23 +82,28 @@ object TestJsPlugin extends AutoPlugin {
       capabilities
       )
     },
-    testJs := {
+    testJsBuild := {
       val logger = sLog.value
-      val browser = testJsPhantomJsDriver.value()
       val jasmineDir = testJsOutputDir.value / "jasmine"
       val jasmineDirAbsolutePath = jasmineDir.getAbsolutePath
       extractJasmineFiles(jasmineDir)
 
-      val results = testJsSuites.value.zipWithIndex.map { case (suite, index) =>
+      testJsSuites.value.zipWithIndex.map { case (suite, index) =>
         val testHtmlAbsolutePath = (testJsOutputDir.value / s"testjs_$index.html").getAbsolutePath
-        generateAndRunSuite(index, suite, jasmineDirAbsolutePath, testHtmlAbsolutePath, logger, browser)
+        generateHtml(index, suite, jasmineDirAbsolutePath, testHtmlAbsolutePath, logger)
       }
+    },
+    testJs := {
+      val files = testJsBuild.value
+      val logger = sLog.value
+      val browser = testJsPhantomJsDriver.value()
+      val summary = files.foldLeft(TestJsSuiteResult(0, 0, 0)) { case (soFar, file) =>
+        val result = execute(browser, logger, file)
 
-      val summary = results.foldLeft(TestJsSuiteResult(0, 0, 0)) { case (summary, result) =>
-        summary.copy(
-          total = summary.total + result.total,
-          success = summary.success + result.success,
-          failure = summary.failure + result.failure
+        soFar.copy(
+          total = soFar.total + result.total,
+          success = soFar.success + result.success,
+          failure = soFar.failure + result.failure
         )
       }
 
@@ -111,43 +117,53 @@ object TestJsPlugin extends AutoPlugin {
     }
   )
 
-  def generateAndRunSuite(
+  def generateHtml(
     index: Int,
     suite: TestJsSuite,
     jasmineDirAbsolutePath: String,
     testHtmlAbsolutePath: String,
-    logger: Logger,
-    browser: PhantomJSDriver
-  ): TestJsSuiteResult = {
+    logger: Logger
+  ): File = {
     val allLibJsTags = generateTagsHtml(suite.libs)
     val allTestJsTags = generateTagsHtml(suite.tests)
 
     IO.write(
       new File(testHtmlAbsolutePath),
       s"""
-        | <html>
-        |   <head>
-        |     <link rel="shortcut icon" type="image/png" href="file://$jasmineDirAbsolutePath/jasmine_favicon.png">
-        |     <link rel="stylesheet" type="text/css" href="file://$jasmineDirAbsolutePath/jasmine.css">
-        |
-        |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/override.js"></script>
-        |
-        |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/jasmine.js"></script>
-        |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/jasmine-html.js"></script>
-        |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/boot.js"></script>
-        |     <script type="text/javascript">
-        |       jasmine.getEnv().addReporter(reporter);
-        |     </script>
-        |     $allLibJsTags
-        |     $allTestJsTags
-        |   </head>
-        |   <body>
-        |   </body>
-        | </html>
+          | <html>
+          |   <head>
+          |     <link rel="shortcut icon" type="image/png" href="file://$jasmineDirAbsolutePath/jasmine_favicon.png">
+          |     <link rel="stylesheet" type="text/css" href="file://$jasmineDirAbsolutePath/jasmine.css">
+          |
+          |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/override.js"></script>
+          |
+          |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/jasmine.js"></script>
+          |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/jasmine-html.js"></script>
+          |     <script type="text/javascript" src="file://$jasmineDirAbsolutePath/boot.js"></script>
+          |     <script type="text/javascript">
+          |       jasmine.getEnv().addReporter(reporter);
+          |     </script>
+          |     $allLibJsTags
+          |     $allTestJsTags
+          |   </head>
+          |   <body>
+          |   </body>
+          | </html>
       """.stripMargin
     )
 
-    browser.get(s"file://$testHtmlAbsolutePath")
+    logger.info(s"Build $testHtmlAbsolutePath for [${suite.tests.get.map(_.getName).mkString(", ")}]")
+
+    new File(testHtmlAbsolutePath)
+  }
+
+  def execute(
+    browser: PhantomJSDriver,
+    logger: Logger,
+    testHtml: File
+  ): TestJsSuiteResult = {
+    logger.info(s"Execute ${testHtml.getAbsolutePath}")
+    browser.get(s"file://${testHtml.getAbsolutePath}")
     browser.executeScript("return consoleOutputs;").asInstanceOf[util.ArrayList[String]].asScala.foreach { line =>
       logger.info(line)
     }
@@ -155,7 +171,7 @@ object TestJsPlugin extends AutoPlugin {
     TestJsSuiteResult(
       total = browser.executeScript("return summary.total;").asInstanceOf[Long],
       success = browser.executeScript("return summary.success;").asInstanceOf[Long],
-      failure = browser.executeScript("return summary.failure;").asInstanceOf[Long]
+      failure =browser.executeScript("return summary.failure;").asInstanceOf[Long]
     )
   }
 
