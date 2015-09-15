@@ -43,7 +43,28 @@ How to use it
   // (WebKeys.assets in TestAssets) does exactly that.
   testJs <<= testJs dependsOn (WebKeys.assets in TestAssets)
 
-  testJsTestFiles := ((WebKeys.public in TestAssets).value / "javascripts" ** "*.spec.js")
+  // Each suite might have its own required library
+  testJsSuites := Seq(
+    TestJsSuite(
+      libs = (WebKeys.public in TestAssets).value / "lib" / "lib.js",
+      tests = (WebKeys.public in TestAssets).value / "javascripts" / "test.spec.js"
+    ),
+    TestJsSuite(
+      libs = (WebKeys.public in TestAssets).value / "lib" / "lib2.js",
+      tests = (WebKeys.public in TestAssets).value / "javascripts" / "test2.spec.js"
+    )
+  )
+  ```
+
+  If every suite requires the same library, we can harness the power of Scala to shorten the code:
+
+  ```
+  testJsSuites := ((WebKeys.public in TestAssets).value / "javascripts" ** "*.spec.js").get.map { specFile =>
+    TestJsSuite(
+      libs = (WebKeys.public in TestAssets).value / "lib" / "lib2.js",
+      tests = PathFinder(specFile)
+    )
+  }
   ```
 
 3. Run `sbt testJs` and you'll see the result:
@@ -69,6 +90,15 @@ You can also hook it to your test command by adding the below line to build.sbt:
 ```
 
 Now `sbt test` will also run `sbt testJs`
+
+
+How it works internally
+--------------------------
+
+An HTML page is generated for each suite and is executed with PhantomJS.
+
+If you'd like to debug each suite, please look at the HTML files in the directory of `testJsOutputDir`,
+which is defaulted to `(target in test).value / "testjs"`; The directory often is `target/testjs`.
 
 
 Contributors
