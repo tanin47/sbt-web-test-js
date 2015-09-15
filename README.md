@@ -98,7 +98,7 @@ How it works internally
 An HTML page is generated for each suite and is executed with PhantomJS.
 
 If you'd like to debug each suite, please look at the HTML files in the directory of `testJsOutputDir`,
-which is defaulted to `(target in test).value / "testjs"`; It often is `target/testjs`.
+which is defaulted to `(target in test).value / "testjs"`; The directory often is `target/testjs`.
 
 
 Contributors
