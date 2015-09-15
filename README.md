@@ -70,14 +70,35 @@ How to use it
 3. Run `sbt testJs` and you'll see the result:
 
   ```bash
-  [info] Running 2 suites
+  [info] Loading project definition from /Users/tanin/Project/sbt-web-test-js/project
+  [info] Loading project definition from /Users/tanin/Project/sbt-web-test-js/test-project/project
+  [info] Updating {file:/Users/tanin/Project/sbt-web-test-js/}sbt-web-test-js...
+  [info] Resolving org.fusesource.jansi#jansi;1.4 ...
+  [info] Done updating.
+  [info] Updating {file:/Users/tanin/Project/sbt-web-test-js/test-project/project/}plugins...
+  [info] Resolving org.fusesource.jansi#jansi;1.4 ...
+  [info] Done updating.
+  [info] Compiling 1 Scala source to /Users/tanin/Project/sbt-web-test-js/target/scala-2.10/sbt-0.13/classes...
+  [info] Set current project to test-project (in build file:/Users/tanin/Project/sbt-web-test-js/test-project/)
+  [info] Updating {file:/Users/tanin/Project/sbt-web-test-js/test-project/}root...
+  [info] Resolving org.fusesource.jansi#jansi;1.4 ...
+  [info] Done updating.
+  [info] CoffeeScript test compiling on 2 source(s)
+  [info] Build /Users/tanin/Project/sbt-web-test-js/test-project/target/testjs/testjs_0.html for [test.spec.js]
+  [info] Build /Users/tanin/Project/sbt-web-test-js/test-project/target/testjs/testjs_1.html for [test2.spec.js]
+  ... PhantomJS logs can be ignored ...
+  [info] Execute /Users/tanin/Project/sbt-web-test-js/test-project/target/testjs/testjs_0.html
   [info] Test from Coffeescript
-  [info]  - Test from Coffeescript contains spec with an expectation [passed]
+  [info]  - Test from Coffeescript check the value from lib.coffee [passed]
+  [info] Execute /Users/tanin/Project/sbt-web-test-js/test-project/target/testjs/testjs_1.html
   [info] Test from Javascripts
   [info]  - Test from Javascripts contains spec with an expectation [passed]
   [info] Total: 2, Success: 2, Failure: 0
-  [success] Total time: 3 s, completed Sep 14, 2015 5:20:22 PM
+  [success] Total time: 6 s, completed Sep 15, 2015 7:51:00 PM
   ```
+
+  Please note that you can see the HTML files generated for the Jasmine tests.
+  If you'd like to debug, you can directly open those files in a browser.
 
 
 Integrate with sbt test
