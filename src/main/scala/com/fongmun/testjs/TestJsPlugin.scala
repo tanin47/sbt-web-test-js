@@ -15,6 +15,7 @@ object TestJsPlugin extends AutoPlugin {
     val testJs = TaskKey[Unit]("testJs", "Run tests with Jasmine")
 
     val testJsTestFiles = SettingKey[PathFinder]("testJsTestFiles", "the files that contain tests")
+    val testJsLibFiles = SettingKey[PathFinder]("testJsLibFiles", "the files that are necessary for tests (but not the tests themselves)")
     val testJsOutputDir = SettingKey[File]("testJsOutputDir", "directory to output files to")
     val testJsPhantomJsBinPath = SettingKey[String]("testJsPhantomJsBinPath", "The full path of PhantomJS executable")
     val testJsPhantomJsDriver = SettingKey[() => PhantomJSDriver]("testJsPhantomJsDriver")
@@ -24,6 +25,8 @@ object TestJsPlugin extends AutoPlugin {
   override def trigger = allRequirements
   override lazy val projectSettings = Seq(
     testJsOutputDir := (target in test).value / "testjs",
+    testJsTestFiles := PathFinder.empty,
+    testJsLibFiles := PathFinder.empty,
     testJsPhantomJsBinPath := "/usr/local/bin/phantomjs",
     testJsPhantomJsDriver := { () =>
       val capabilities = {
@@ -72,12 +75,8 @@ object TestJsPlugin extends AutoPlugin {
       val logger = sLog.value
       val jasmineHtml = testJsOutputDir.value / "testjs.html"
 
-      val allJsTags = testJsTestFiles.value.get
-        .map(_.getAbsolutePath)
-        .map { path =>
-          s"""<script type="text/javascript" src="file://$path"></script>"""
-        }
-        .mkString("\n")
+      val allLibJsTags = generateTagsHtml(testJsLibFiles.value)
+      val allTestJsTags = generateTagsHtml(testJsTestFiles.value)
 
       val jasmineDir = testJsOutputDir.value / "jasmine"
       val jasmineDirAbsolutePath = jasmineDir.getAbsolutePath
@@ -99,7 +98,8 @@ object TestJsPlugin extends AutoPlugin {
           |     <script type="text/javascript">
           |       jasmine.getEnv().addReporter(reporter);
           |     </script>
-          |     $allJsTags
+          |     $allLibJsTags
+          |     $allTestJsTags
           |   </head>
           |   <body>
           |   </body>
@@ -125,6 +125,15 @@ object TestJsPlugin extends AutoPlugin {
       }
     }
   )
+
+  def generateTagsHtml(path: PathFinder): String = {
+    path.get
+      .map(_.getAbsolutePath)
+      .map { path =>
+        s"""<script type="text/javascript" src="file://$path"></script>"""
+      }
+      .mkString("\n")
+  }
 
   def extractJasmineFiles(parentDir: File): Unit = {
     List(
