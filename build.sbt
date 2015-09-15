@@ -6,8 +6,6 @@ description := "A sbt-web plugin that run tests with Jasmine. Tests can be writt
 
 organization := "com.fongmun"
 
-version := "1.0.0-SNAPSHOT"
-
 scalaVersion := "2.10.4"
 
 publishMavenStyle := true
@@ -69,6 +67,10 @@ pomExtra :=
       <url>http://www.github.com/tanin47</url>
     </developer>
   </developers>
+
+releaseCrossBuild := true
+
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 
 
