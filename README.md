@@ -28,11 +28,8 @@ How to use it
 1. Add sbt-web-test-js into plugins.sbt:
 
   ```scala
-  addSbtPlugin("com.fongmun" %% "sbt-web-test-js" % "1.0.0")
+  addSbtPlugin("com.fongmun" %% "sbt-web-test-js" % "1.2.1")
   ```
-
-  * Please note that we are waiting for the approval of [OSSRH-17664](https://issues.sonatype.org/browse/OSSRH-17664).
-  So, we can publish our plugin to Maven Central
 
 2. Configure the sbt-web-test-js in build.sbt:
 
