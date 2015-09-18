@@ -28,7 +28,7 @@ How to use it
 1. Add sbt-web-test-js into plugins.sbt:
 
   ```scala
-  addSbtPlugin("com.fongmun" %% "sbt-web-test-js" % "1.2.1")
+  addSbtPlugin("com.fongmun" %% "sbt-web-test-js" % "1.2.2")
   ```
 
 2. Configure the sbt-web-test-js in build.sbt:
