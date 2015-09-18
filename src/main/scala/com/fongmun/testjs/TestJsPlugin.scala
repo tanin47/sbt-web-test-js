@@ -97,22 +97,27 @@ object TestJsPlugin extends AutoPlugin {
       val files = testJsBuild.value
       val logger = sLog.value
       val browser = testJsPhantomJsDriver.value()
-      val summary = files.foldLeft(TestJsSuiteResult(0, 0, 0)) { case (soFar, file) =>
-        val result = execute(browser, logger, file)
 
-        soFar.copy(
-          total = soFar.total + result.total,
-          success = soFar.success + result.success,
-          failure = soFar.failure + result.failure
-        )
-      }
+      try {
+        val summary = files.foldLeft(TestJsSuiteResult(0, 0, 0)) { case (soFar, file) =>
+          val result = execute(browser, logger, file)
 
-      val summaryText = s"Total: ${summary.total}, Success: ${summary.success}, Failure: ${summary.failure}"
+          soFar.copy(
+            total = soFar.total + result.total,
+            success = soFar.success + result.success,
+            failure = soFar.failure + result.failure
+          )
+        }
 
-      if (summary.failure > 0) {
-        sys.error(summaryText)
-      } else {
-        logger.info(summaryText)
+        val summaryText = s"Total: ${summary.total}, Success: ${summary.success}, Failure: ${summary.failure}"
+
+        if (summary.failure > 0) {
+          sys.error(summaryText)
+        } else {
+          logger.info(summaryText)
+        }
+      } finally {
+        browser.close()
       }
     }
   )
